@@ -1,8 +1,9 @@
 """
 build_sas_docx.py - Generates the official SAS Submission Format Word document
-for the FPGA FFT Accelerator Project.
+for the FPGA FFT Accelerator Project with embedded figures and fact tables.
 """
 
+import os
 import docx
 from docx.shared import Inches, Pt, RGBColor
 from docx.enum.text import WD_ALIGN_PARAGRAPH
@@ -46,6 +47,25 @@ def add_styled_paragraph(cell, text, bold_prefix="", italic=False, space_after=4
     return p
 
 
+def add_image_with_caption(cell, img_path, caption_text, width_inches=5.2):
+    if os.path.exists(img_path):
+        p_img = cell.add_paragraph()
+        p_img.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        p_img.paragraph_format.space_before = Pt(6)
+        p_img.paragraph_format.space_after = Pt(2)
+        p_img.add_run().add_picture(img_path, width=Inches(width_inches))
+        
+        p_cap = cell.add_paragraph()
+        p_cap.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        p_cap.paragraph_format.space_after = Pt(8)
+        r = p_cap.add_run(caption_text)
+        r.font.name = 'Calibri'
+        r.font.size = Pt(8.5)
+        r.font.italic = True
+        r.font.bold = True
+        r.font.color.rgb = RGBColor(60, 60, 80)
+
+
 def build_sas_report():
     template_path = "docs/SAS_Submission_Format.docx"
     output_path = "docs/FPGA_FFT_Accelerator_SAS_Report.docx"
@@ -80,8 +100,8 @@ def build_sas_report():
     t1.rows[1].cells[1].text = "FPGA-Based FFT Accelerator for Single Radix-2 Butterfly"
     t1.rows[2].cells[1].text = "Module 4: Discrete Fourier Transform (DFT) & FFT Algorithms"
     t1.rows[3].cells[1].text = "CO-4: Analyze and compute Discrete Fourier Transforms using efficient Fast Fourier Transform algorithms, and synthesize fixed-point hardware architectures for real-time DSP applications."
-    t1.rows[4].cells[1].text = "AMD Vivado Design Suite ML Enterprise (v2026.1), SystemVerilog (IEEE 1800-2017), Python 3.14 (NumPy 1.26.4)"
-    t1.rows[5].cells[1].text = "https://www.xilinx.com/products/design-tools/vivado.html , https://numpy.org/"
+    t1.rows[4].cells[1].text = "AMD Vivado Design Suite ML Enterprise (v2026.1), SystemVerilog (IEEE 1800-2017), Python 3.14 (NumPy 1.26.4, Matplotlib 3.8.4)"
+    t1.rows[5].cells[1].text = "https://github.com/JaganKSwain/FPGA-FFT-Accelerator , https://www.xilinx.com/products/design-tools/vivado.html"
     
     for row in t1.rows:
         for cell in row.cells:
@@ -141,6 +161,9 @@ def build_sas_report():
                                  "Memory accesses never exceed 2 ports/cycle, mapping directly into a single Block RAM primitive.",
                          bold_prefix="6. Dual-Port RAM Port Contention Resolution:\n")
 
+    add_image_with_caption(d_cell, "docs/figures/fig7_memory_schedule.png",
+                           "Figure D.1: Conflict-Free 2-Phase True Dual-Port Block RAM Scheduling Waveform", 5.2)
+
     # -------------------------------------------------------------------------
     # Table 4: Section E - Procedure / Steps Followed
     # -------------------------------------------------------------------------
@@ -170,6 +193,9 @@ def build_sas_report():
                                  "  • UltraRAM / Distributed LUTRAM: 0 (Pure BRAM implementation)",
                          bold_prefix="F1. Hardware Resource Utilization:\n")
     
+    add_image_with_caption(f_cell, "docs/figures/fig4_resource_breakdown.png",
+                           "Figure F.1: Post-Route FPGA Resource Breakdown on AMD Alveo U50", 4.8)
+
     add_styled_paragraph(f_cell, "2. Post-Route Static Timing Summary (@ 100 MHz Target / 10.000 ns Period):\n"
                                  "  • Worst Negative Slack (WNS): +6.706 ns (Clean Timing Closure)\n"
                                  "  • Total Negative Slack (TNS): 0.000 ns (0 failing endpoints out of 1,238)\n"
@@ -177,29 +203,46 @@ def build_sas_report():
                                  "  • Total Hold Slack (THS): 0.000 ns (0 hold violations)\n"
                                  "  • Derived Maximum Clock Frequency (Fmax): 303.58 MHz (3.04x timing margin)",
                          bold_prefix="F2. Static Timing Closure:\n")
+    
+    add_image_with_caption(f_cell, "docs/figures/fig5_timing_and_fmax.png",
+                           "Figure F.2: Static Timing Closure, Setup Slack (+6.706 ns), and Fmax (303.58 MHz)", 4.6)
 
     add_styled_paragraph(f_cell, "3. Power Analysis Summary:\n"
                                  "  • Total On-Chip Power: 2.216 W (dominated by UltraScale+ package static baseline of 2.212 W)\n"
-                                 "  • Dynamic Logic Power: 0.004 W (Only 4 mW!)",
-                         bold_prefix="F3. Power Dissipation:\n")
+                                 "  • Dynamic Logic Power: 0.004 W (Only 4 mW!)\n"
+                                 "  • Dynamic Energy per 64-Pt FFT: 21.72 nJ / transform",
+                         bold_prefix="F3. Power Dissipation & Energy Profile:\n")
+    
+    add_image_with_caption(f_cell, "docs/figures/fig6_power_and_energy.png",
+                           "Figure F.3: Power Dissipation & Energy-per-Transform Efficiency Profile", 4.8)
 
     add_styled_paragraph(f_cell, "4. Cycle-Accurate Execution Timing Breakdown (N=64 MVP @ 100 MHz):\n"
                                  "  • Sample Ingestion (LOAD): 65 clock cycles (0.65 us)\n"
                                  "  • Butterfly Compute (COMPUTE): 414 clock cycles (4.14 us) [192 BFs @ 2 cycles + drains]\n"
                                  "  • Bin Egress (UNLOAD): 64 clock cycles (0.64 us)\n"
-                                 "  • Total Frame Latency: 543 clock cycles (5.43 us)\n"
-                                 "  • Sustained Transform Throughput: ~184,162 transforms / second",
+                                 "  • Total Frame Latency: 543 clock cycles (5.43 us @ 100 MHz, 1.79 us @ 303.58 MHz)\n"
+                                 "  • Sustained Transform Throughput: 184,162 transforms / second (@ 100 MHz), 559,079 transforms / second (@ 303.58 MHz)",
                          bold_prefix="F4. Latency & Throughput Profile:\n")
+    
+    add_image_with_caption(f_cell, "docs/figures/fig3_latency_scaling.png",
+                           "Figure F.4: Latency Breakdown (Load, Compute, Unload) Across Transform Sizes", 4.6)
 
     add_styled_paragraph(f_cell, "5. Spectral Quality & Precision Metrics (N=64 MVP across 12 Test Classes):\n"
                                  "  • Bin-Centered Tone (k=5): SQNR = 114.92 dB | RMSE = 0.0059 LSB | Max Err = 0.0 LSB\n"
                                  "  • Off-Bin Tone (k=5.35): SQNR = 88.42 dB | RMSE = 0.1245 LSB | Max Err = 1.0 LSB\n"
                                  "  • Two-Tone Signal (k=3, 7): SQNR = 82.16 dB | RMSE = 0.2031 LSB | Max Err = 1.0 LSB\n"
+                                 "  • Complex Exponential: SQNR = 114.92 dB | RMSE = 0.0071 LSB | Max Err = 0.0 LSB\n"
                                  "  • Uniform Random Noise: SQNR = 67.85 dB | RMSE = 0.7732 LSB | Max Err = 2.0 LSB\n"
                                  "  • Gaussian Noise: SQNR = 68.21 dB | RMSE = 0.7410 LSB | Max Err = 2.0 LSB\n"
                                  "  • Impulse & DC: SQNR = 114.92 dB | RMSE = 0.0000 LSB | Max Err = 0.0 LSB\n"
                                  "  • Pos / Neg Full Scale: Exact match, 0 overflow anomalies.",
                          bold_prefix="F5. Numerical Accuracy Performance:\n")
+    
+    add_image_with_caption(f_cell, "docs/figures/fig1_spectral_comparison.png",
+                           "Figure F.5: Spectral Response & 0-LSB Hardware Residual Error (Two-Tone Signal)", 5.0)
+
+    add_image_with_caption(f_cell, "docs/figures/fig2_sqnr_rmse_profile.png",
+                           "Figure F.6: SQNR and RMSE Precision Distribution Across 11 Standard Test Classes", 5.0)
 
     # -------------------------------------------------------------------------
     # Table 6: Section G - Verification
@@ -259,8 +302,13 @@ def build_sas_report():
                     r.font.name = 'Calibri'
                     r.font.size = Pt(9.5)
                     
-    doc.save(output_path)
-    print(f"Generated official SAS Project Report at {output_path} successfully.")
+    try:
+        doc.save(output_path)
+        print(f"Generated official SAS Project Report with embedded figures at {output_path} successfully.")
+    except PermissionError:
+        fallback_path = "docs/FPGA_FFT_Accelerator_SAS_Report_Updated.docx"
+        doc.save(fallback_path)
+        print(f"Original file was open in Word; saved report with embedded figures to {fallback_path} successfully.")
 
 
 if __name__ == "__main__":

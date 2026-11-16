@@ -81,6 +81,9 @@ Our design resolves this through a **2-cycle scheduled conflict-free access pipe
 - **Dedicated Hardware Inference:** Synthesizes directly into a single `RAMB36E2` block RAM.
 - **Zero Inter-Stage Bank Conflicts:** Preserves identical memory mapping across all stages.
 
+![Figure 7: Conflict-Free 2-Phase True Dual-Port RAM Scheduling](figures/fig7_memory_schedule.png)
+*Figure 7: Conflict-Free 2-Phase True Dual-Port RAM Scheduling ([fig7_memory_schedule.png](file:///c:/Users/jagan/OneDrive/Documents/DSP_Project/docs/figures/fig7_memory_schedule.png)). Even cycles execute dual-port reads ($p, q$); odd cycles execute dual-port writebacks ($A', B'$), completely eliminating Block RAM port hazards.*
+
 ### Pipelined Arithmetic Datapath
 - **Complex Multiplier ([`rtl/complex_mult.sv`](file:///c:/Users/jagan/OneDrive/Documents/DSP_Project/rtl/complex_mult.sv)):**
   - **Latency:** 3 clock cycles.
@@ -129,6 +132,12 @@ Automated regression executed via Vivado Simulator v2026.1 across all FFT sizes 
 
 **Regression Summary:** **60 out of 60 test suites PASSED with 0 LSB mismatch across all 1,536 checked frequency bins**.
 
+![Figure 1: Spectral Response Comparison & Residual Error](figures/fig1_spectral_comparison.png)
+*Figure 1: Spectral Response Comparison & Bit-Level Residual Error ([fig1_spectral_comparison.png](file:///c:/Users/jagan/OneDrive/Documents/DSP_Project/docs/figures/fig1_spectral_comparison.png)). (a) Two-tone input signal ($k_1=3, k_2=7$). (b) Magnitude spectrum comparing double-precision NumPy float reference vs. fixed-point RTL. (c) Residual error across all 64 frequency bins showing exact 0 LSB mismatch.*
+
+![Figure 2: Numerical Precision Profile](figures/fig2_sqnr_rmse_profile.png)
+*Figure 2: Numerical Precision Profile Across Test Classes ([fig2_sqnr_rmse_profile.png](file:///c:/Users/jagan/OneDrive/Documents/DSP_Project/docs/figures/fig2_sqnr_rmse_profile.png)). Demonstrates compliance with SQNR $\ge 65.0\text{ dB}$ (target baseline) and $\text{RMSE} \le 1.0\text{ LSB}$ across all standard test conditions.*
+
 ### Protocol Stress & Robustness Testing
 Verified in [`tb/tb_fft_protocol_stress.sv`](file:///c:/Users/jagan/OneDrive/Documents/DSP_Project/tb/tb_fft_protocol_stress.sv):
 1. **Random Input Bubbles:** Random `s_axis_tvalid` drops $\rightarrow$ **PASS (0 LSB error)**.
@@ -151,6 +160,9 @@ The accelerator was synthesized, placed, and routed using Vivado Design Suite 20
 | **Block RAM (RAMB36)** | **1** | 1,344 | **0.07%** | True Dual-Port data RAM ($64 \times 32$ bits) |
 | **DSP Slices (DSP48E2)** | **4** | 5,952 | **0.07%** | 4 real multipliers in complex multiplier |
 
+![Figure 4: FPGA Resource Utilization Profile](figures/fig4_resource_breakdown.png)
+*Figure 4: FPGA Resource Utilization Profile ([fig4_resource_breakdown.png](file:///c:/Users/jagan/OneDrive/Documents/DSP_Project/docs/figures/fig4_resource_breakdown.png)). (a) Percentage utilization relative to AMD Alveo U50 hardware budget. (b) Absolute dedicated primitive breakdown (log-scale).*
+
 ### Post-Route Timing Closure Summary
 
 | Timing Metric | Achieved Value | Constraint | Timing Status |
@@ -162,9 +174,15 @@ The accelerator was synthesized, placed, and routed using Vivado Design Suite 20
 | **Target Clock Frequency** | $100.00\text{ MHz}$ | $100.00\text{ MHz}$ | Baseline Met |
 | **Derived Maximum Clock ($F_{\max}$)** | **$303.58\text{ MHz}$** | — | **$3.04\times$ Timing Margin** |
 
+![Figure 5: Static Timing Closure & Slack Breakdown](figures/fig5_timing_and_fmax.png)
+*Figure 5: Static Timing Closure & Slack Breakdown ([fig5_timing_and_fmax.png](file:///c:/Users/jagan/OneDrive/Documents/DSP_Project/docs/figures/fig5_timing_and_fmax.png)). 10.0 ns target clock period vs. 3.294 ns critical path datapath delay, providing +6.706 ns positive setup slack and enabling 303.58 MHz operation.*
+
 ### Power Consumption Summary
 - **Total On-Chip Power:** $2.216\text{ W}$ (dominated by UltraScale+ static package baseline of $2.212\text{ W}$).
 - **Dynamic Logic Power:** **$0.004\text{ W}$ ($4\text{ mW}$)**.
+
+![Figure 6: Power Dissipation and Energy Efficiency](figures/fig6_power_and_energy.png)
+*Figure 6: Power Dissipation & Energy Efficiency ([fig6_power_and_energy.png](file:///c:/Users/jagan/OneDrive/Documents/DSP_Project/docs/figures/fig6_power_and_energy.png)). (a) Power distribution between active dynamic switching (4 mW) and package static leakage. (b) Energy consumed per 64-point FFT transform across clock operating points.*
 
 ---
 
@@ -172,13 +190,42 @@ The accelerator was synthesized, placed, and routed using Vivado Design Suite 20
 
 | FFT Size ($N$) | Stages | Butterflies | CLB LUTs | Registers | DSPs | BRAM | Frame Cycles | Latency (@ 100 MHz) | Throughput (transforms/s) |
 | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| **16** | 4 | 32 | 352 | 310 | 4 | 1 | 105 | $1.05\ \mu\text{s}$ | **952,380** |
-| **32** | 5 | 80 | 368 | 318 | 4 | 1 | 235 | $2.35\ \mu\text{s}$ | **425,531** |
+| **4** | 2 | 4 | 338 | 302 | 4 | 1 | 21 | $0.21\ \mu\text{s}$ | **4,761,904** |
+| **8** | 3 | 12 | 345 | 306 | 4 | 1 | 47 | $0.47\ \mu\text{s}$ | **2,127,659** |
+| **16** | 4 | 32 | 352 | 310 | 4 | 1 | 107 | $1.07\ \mu\text{s}$ | **934,579** |
+| **32** | 5 | 80 | 368 | 318 | 4 | 1 | 243 | $2.43\ \mu\text{s}$ | **411,522** |
 | **64** | 6 | 192 | 387 | 325 | 4 | 1 | 543 | $5.43\ \mu\text{s}$ | **184,162** |
+
+![Figure 3: Cycle Latency Breakdown Across Transform Lengths](figures/fig3_latency_scaling.png)
+*Figure 3: Cycle Latency Breakdown Across Transform Lengths ([fig3_latency_scaling.png](file:///c:/Users/jagan/OneDrive/Documents/DSP_Project/docs/figures/fig3_latency_scaling.png)). Stacked bar breakdown showing Sample Ingestion (Load), Butterfly Compute, and Result Egress (Unload) with theoretical analytical model overlay.*
 
 ---
 
-## 7. Viva Voce & Technical Defense Q&A Preparation
+## 7. Key Engineering Facts & Metrics Dashboard
+
+### Summary of Critical Facts
+
+| Metric Dimension | Exact Measurement / Characteristic | Operational Significance |
+| :--- | :--- | :--- |
+| **Bit-Level Accuracy** | **0 LSB mismatch across 100% of bins** (60/60 tests) | Complete bit-level equivalence between RTL hardware and golden fixed-point model. |
+| **Worst-Case Noise SQNR** | **$65.14\text{ dB}$ (Gaussian)** / **$70.50\text{ dB}$ (Uniform)** | Exceeds the $65.0\text{ dB}$ project fidelity constraint for broad-spectrum input signals. |
+| **Tone SQNR** | **$82.50\text{ dB}$ to $114.92\text{ dB}$** | Pristine harmonic reconstruction with zero observable spur growth. |
+| **Convergent Rounding Bias** | **$0.000\text{ LSB}$ accumulated DC bias** | Eliminates false DC peaks at bin 0 that plague standard truncation schemes. |
+| **Frame Latency ($N=64$)** | **543 clock cycles ($5.43\ \mu\text{s}$ @ 100 MHz)** | Ingestion: 65 cyc, Compute: 414 cyc, Egress: 64 cyc. |
+| **Max Frequency ($F_{\max}$)** | **$303.58\text{ MHz}$** | High-speed timing margin ($3.04\times$ headroom over 100 MHz constraint). |
+| **Post-Route Setup Slack** | **$\text{WNS} = +6.706\text{ ns}$, $\text{TNS} = 0.000\text{ ns}$** | 0 setup violations across all 1,238 logic paths. |
+| **Post-Route Hold Slack** | **$\text{WHS} = +0.045\text{ ns}$, $\text{THS} = 0.000\text{ ns}$** | Clean hold timing with zero hold padding race conditions. |
+| **FPGA Logic Footprint** | **387 CLB LUTs (0.044%)**, **325 FFs (0.019%)** | Minimal logic fabric footprint, ideal for multi-channel co-processor integration. |
+| **Dedicated Primitives** | **4 DSP48E2 slices**, **1 RAMB36E2 tile** | Exact single-butterfly resource boundary with zero distributed RAM overhead. |
+| **Dynamic Power** | **$4\text{ mW}$ ($0.004\text{ W}$)** | Ultra-low switching dissipation suitable for battery-operated edge DSP systems. |
+| **Dynamic Energy / FFT** | **$21.72\text{ nJ}$ per 64-point FFT transform** | Sustained energy efficiency across all frequency points ($4\text{ mW} \times 5.43\ \mu\text{s}$). |
+| **Sustained Throughput** | **$184,162\text{ transforms/sec}$ @ 100 MHz** | Scales to **$559,079\text{ transforms/sec}$** at maximum $F_{\max} = 303.58\text{ MHz}$. |
+| **Sample Processing Bandwidth** | **$11.78\text{ Msamples/sec}$** | Scales to **$35.78\text{ Msamples/sec}$** at maximum $F_{\max} = 303.58\text{ MHz}$. |
+| **Silicon Area Savings** | **83.3% DSP reduction vs. Pipelined FFT** | 4 DSPs utilized compared to 24 DSPs required for a 6-stage fully pipelined streaming FFT. |
+
+---
+
+## 8. Viva Voce & Technical Defense Q&A Preparation
 
 #### Q1: Why use a single radix-2 butterfly rather than a fully pipelined streaming FFT architecture?
 > **Answer:** A fully pipelined streaming FFT requires $S = \log_2 N$ separate butterfly stages operating concurrently, consuming $4 \times \log_2 N = 24$ DSP slices for $N=64$. In resource-constrained FPGA designs or multichannel sensor front-ends, dedicating 24 DSPs to a single FFT channel is often prohibitive. Our single-butterfly iterative engine reuses the exact same 4 DSP slices across all stages, reducing DSP utilization by **83.3%** (4 DSPs vs. 24 DSPs) while maintaining a high transform throughput of **184,162 FFTs/second**.

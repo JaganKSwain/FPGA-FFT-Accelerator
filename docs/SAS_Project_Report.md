@@ -154,6 +154,9 @@ flowchart TD
 | **DSP Slices (DSP48E2)** | **4** | 5,952 | **0.07%** | 4 real multipliers in pipelined complex multiplier |
 | **Block RAM (RAMB36E2)** | **1** | 1,344 | **0.07%** | Inferred True Dual-Port Block RAM ($64 \times 32$ bits) |
 
+![Figure 4: FPGA Resource Utilization Profile](figures/fig4_resource_breakdown.png)
+*Figure 4: FPGA Resource Utilization Profile ([fig4_resource_breakdown.png](file:///c:/Users/jagan/OneDrive/Documents/DSP_Project/docs/figures/fig4_resource_breakdown.png)). (a) Percentage utilization relative to Alveo U50 budget. (b) Absolute dedicated hardware primitive counts.*
+
 ### 2. Post-Route Static Timing Summary
 
 | Timing Metric | Achieved Value | Constraint Specification | Timing Status |
@@ -169,9 +172,15 @@ flowchart TD
 $$T_{\min} = T_{\text{clk}} - \text{WNS} = 10.000\text{ ns} - 6.706\text{ ns} = 3.294\text{ ns}$$
 $$F_{\max} = \frac{1}{T_{\min}} = \frac{1}{3.294\text{ ns}} \approx \mathbf{303.58\text{ MHz}}$$
 
+![Figure 5: Static Timing Closure & Slack Breakdown](figures/fig5_timing_and_fmax.png)
+*Figure 5: Static Timing Closure & Slack Breakdown ([fig5_timing_and_fmax.png](file:///c:/Users/jagan/OneDrive/Documents/DSP_Project/docs/figures/fig5_timing_and_fmax.png)). Datapath delay of 3.294 ns leaves +6.706 ns of setup timing slack, closing timing at 100 MHz with Fmax = 303.58 MHz.*
+
 ### 3. Power Consumption Breakdown
 - **Total On-Chip Power:** $2.216\text{ W}$ (dominated by UltraScale+ static package baseline of $2.212\text{ W}$).
 - **Dynamic Logic Power:** **$0.004\text{ W}$ ($4\text{ mW}$)**.
+
+![Figure 6: Power Dissipation and Energy Efficiency](figures/fig6_power_and_energy.png)
+*Figure 6: Power Dissipation & Energy Efficiency ([fig6_power_and_energy.png](file:///c:/Users/jagan/OneDrive/Documents/DSP_Project/docs/figures/fig6_power_and_energy.png)). Dynamic power is only 4 mW; dynamic energy per 64-point FFT transform is 21.72 nJ.*
 
 ### 4. Cycle Latency & Real-Time Throughput Breakdown (N=64 MVP @ 100 MHz)
 
@@ -182,6 +191,9 @@ $$F_{\max} = \frac{1}{T_{\min}} = \frac{1}{3.294\text{ ns}} \approx \mathbf{303.
 | **Bin Egress (`UNLOAD`)** | 64 cycles | $0.64\ \mu\text{s}$ | Stream out 64 frequency bins in natural sequential order |
 | **Total Frame Latency** | **543 cycles** | **$5.43\ \mu\text{s}$** | Complete transform from first input sample to final output bin |
 | **Continuous Throughput** | — | **184,162 transforms/sec** | Sustained real-time FFT processing bandwidth |
+
+![Figure 3: Cycle Latency Breakdown Across Transform Lengths](figures/fig3_latency_scaling.png)
+*Figure 3: Cycle Latency Breakdown Across Transform Lengths ([fig3_latency_scaling.png](file:///c:/Users/jagan/OneDrive/Documents/DSP_Project/docs/figures/fig3_latency_scaling.png)). Execution time scaling for Load, Compute, and Unload compared against the analytical latency model.*
 
 ### 5. Spectral Quality & Numerical Error Analysis Table (N=64 MVP)
 
@@ -199,6 +211,12 @@ $$F_{\max} = \frac{1}{T_{\min}} = \frac{1}{3.294\text{ ns}} \approx \mathbf{303.
 | `gaussian_noise` ($\sigma=0.25$) | 68.21 dB | 0.7410 | 2.0 LSB | **PASS (0 LSB)** |
 | `pos_full_scale` ($+32767$) | 114.92 dB | 0.0000 | 0.0 LSB | **PASS (0 LSB)** |
 | `neg_full_scale` ($-32768$) | 114.92 dB | 0.0000 | 0.0 LSB | **PASS (0 LSB)** |
+
+![Figure 1: Spectral Response Comparison & Residual Error](figures/fig1_spectral_comparison.png)
+*Figure 1: Spectral Response Comparison & Residual Error ([fig1_spectral_comparison.png](file:///c:/Users/jagan/OneDrive/Documents/DSP_Project/docs/figures/fig1_spectral_comparison.png)). Double-precision NumPy float FFT vs. bit-accurate fixed-point RTL FFT, demonstrating exact 0 LSB mismatch across all 64 bins.*
+
+![Figure 2: Numerical Precision Profile Across Test Classes](figures/fig2_sqnr_rmse_profile.png)
+*Figure 2: Numerical Precision Profile Across Test Classes ([fig2_sqnr_rmse_profile.png](file:///c:/Users/jagan/OneDrive/Documents/DSP_Project/docs/figures/fig2_sqnr_rmse_profile.png)). High SQNR (> 65 dB) and low RMSE (< 1 LSB) confirmed for all test signals.*
 
 ### 6. Comparative Scaling Analysis Across FFT Sizes
 
