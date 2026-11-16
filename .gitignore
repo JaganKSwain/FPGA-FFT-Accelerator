@@ -1,0 +1,33 @@
+# Vivado compilation, implementation, and simulation artifacts
+build/
+xsim.dir/
+*.wdb
+*.vcd
+*.saif
+*.jou
+*.pb
+clockInfo.txt
+vivado*.log
+vivado*.jou
+xsim*.log
+xsim*.jou
+xvlog*.log
+xvlog*.pb
+xelab*.log
+xelab*.pb
+
+# Python artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+*.pytest_cache/
+
+# Temporary / backup files
+*.bak
+*.tmp
+*~
+~$*
+
+# Operating System
+Thumbs.db
+.DS_Store

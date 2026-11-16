@@ -1,0 +1,5 @@
+// Expected golden output for impulse, N=4 (Format: [31:16] Real, [15:0] Imag)
+20000000
+20000000
+20000000
+20000000

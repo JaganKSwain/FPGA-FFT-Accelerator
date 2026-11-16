@@ -1,0 +1,9 @@
+// Expected golden output for off_bin_tone, N=8 (Format: [31:16] Real, [15:0] Imag)
+12FE0000
+1ED720E3
+00EAEB34
+0662F9FD
+07200000
+06620603
+00EA14CC
+1ED7DF1D

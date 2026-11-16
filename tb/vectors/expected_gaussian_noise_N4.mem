@@ -1,0 +1,5 @@
+// Expected golden output for gaussian_noise, N=4 (Format: [31:16] Real, [15:0] Imag)
+08A2F119
+FDEA0A18
+F87A258F
+FB420EA8

@@ -1,0 +1,5 @@
+// Expected golden output for uniform_random, N=4 (Format: [31:16] Real, [15:0] Imag)
+E725113E
+D59AF8D2
+1493C782
+EB15F216

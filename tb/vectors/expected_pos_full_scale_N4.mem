@@ -1,0 +1,5 @@
+// Expected golden output for pos_full_scale, N=4 (Format: [31:16] Real, [15:0] Imag)
+7FFF7FFF
+00000000
+00000000
+00000000

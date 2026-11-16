@@ -1,0 +1,5 @@
+// Expected golden output for delayed_impulse, N=4 (Format: [31:16] Real, [15:0] Imag)
+20000000
+0000E000
+E0000000
+00002000

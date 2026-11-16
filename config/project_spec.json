@@ -1,0 +1,53 @@
+{
+  "project_name": "fpga_fft_accelerator",
+  "version": "1.0.0",
+  "algorithm": "Radix-2 Decimation-In-Time (DIT) FFT",
+  "architecture": "Iterative single radix-2 butterfly, two-bank dual-port RAM",
+  "fpga_part": "xcu50-fsvh2104-2-e",
+  "clock": {
+    "clk_period_ns": 10.0,
+    "target_freq_mhz": 100.0,
+    "clock_port": "clk",
+    "reset_port": "rst_n",
+    "reset_active": "low"
+  },
+  "fft_params": {
+    "supported_points": [4, 8, 16, 32, 64],
+    "default_point_n": 64,
+    "log2_n": 6
+  },
+  "arithmetic": {
+    "data_width": 16,
+    "data_format": "Q1.15",
+    "twiddle_width": 16,
+    "twiddle_format": "Q2.14",
+    "twiddle_frac_bits": 14,
+    "twiddle_convention": "-2*pi*k/N",
+    "internal_width": 16,
+    "multiplier_arch": "4-DSP pipelined complex multiplier (3 stages)",
+    "scaling_policy": "Divide-by-2 per butterfly stage (arithmetic right shift 1 with convergent rounding)",
+    "round_mode": "CONVERGENT",
+    "saturation": "SYMMETRIC_CLAMP [-32768, 32767]"
+  },
+  "memory": {
+    "banked_bram": true,
+    "num_banks": 2,
+    "bank_depth": 32,
+    "inter_stage_flush_cycles": 4
+  },
+  "interface": {
+    "type": "AXI4-Stream-like valid/ready handshake",
+    "input_stream": {
+      "data": "s_axis_tdata",
+      "valid": "s_axis_tvalid",
+      "ready": "s_axis_tready",
+      "last": "s_axis_tlast"
+    },
+    "output_stream": {
+      "data": "m_axis_tdata",
+      "valid": "m_axis_tvalid",
+      "ready": "m_axis_tready",
+      "last": "m_axis_tlast"
+    }
+  }
+}

@@ -1,0 +1,10 @@
+N,Signal,Option_A_SQNR_dB,Option_A_RMSE_LSB,Option_A_MaxErr_LSB,Option_B_SQNR_dB,Option_B_RMSE_LSB,Option_B_MaxErr_LSB
+16,Tone_Bin5,114.92,0.012,0.0,114.92,0.012,0.0
+16,Two_Tone,82.16,0.407,1.1,99.85,0.053,0.1
+16,Random_Uniform,76.06,0.582,1.0,78.71,0.429,0.6
+32,Tone_Bin5,114.92,0.009,0.0,114.92,0.009,0.0
+32,Two_Tone,82.16,0.287,1.1,99.85,0.037,0.1
+32,Random_Uniform,73.01,0.630,1.3,76.70,0.412,0.6
+64,Tone_Bin5,114.92,0.006,0.0,89.34,0.119,1.0
+64,Two_Tone,82.16,0.203,1.2,99.85,0.027,0.2
+64,Random_Uniform,67.85,0.773,1.4,73.75,0.392,0.5

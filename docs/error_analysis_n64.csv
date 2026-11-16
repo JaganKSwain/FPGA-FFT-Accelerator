@@ -1,0 +1,13 @@
+Test_Case,SQNR_dB,RMSE_LSB,Max_Abs_Error_LSB,Max_Output_Magnitude,Bit_Accurate_RTL_Match
+zeros,Inf (>120),0.0000,0.0,0.0,PASS (0 LSB)
+impulse,90.31,0.0156,0.0,512.0,PASS (0 LSB)
+delayed_impulse,60.85,0.4640,0.7,512.7,PASS (0 LSB)
+dc,Inf (>120),0.0000,0.0,16384.0,PASS (0 LSB)
+bin_centered_tone,84.33,0.1408,0.8,13106.0,PASS (0 LSB)
+off_bin_tone,70.35,0.7025,1.2,10589.5,PASS (0 LSB)
+two_tone,82.50,0.1382,0.6,7372.0,PASS (0 LSB)
+complex_exponential,96.17,0.0541,0.4,27852.0,PASS (0 LSB)
+uniform_random,70.50,0.7345,1.3,6297.3,PASS (0 LSB)
+gaussian_noise,65.14,0.7825,1.6,3199.3,PASS (0 LSB)
+pos_full_scale,Inf (>120),0.0000,0.0,46339.5,PASS (0 LSB)
+neg_full_scale,Inf (>120),0.0000,0.0,46341.0,PASS (0 LSB)

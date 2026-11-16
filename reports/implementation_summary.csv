@@ -1,0 +1,2 @@
+LUT,LUT_Util,FF,FF_Util,BRAM,DSP,WNS_ns,TNS_ns,WHS_ns,THS_ns,Target_Freq_MHz,Derived_Fmax_MHz,Total_On_Chip_Power_W,Dynamic_Power_W,Device_Static_Power_W
+387,0%,325,0%,0,4,6.706,0.000,4.458,0.000,100.0,303.58,2.216,0.004,2.212
