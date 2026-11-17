@@ -103,15 +103,23 @@ Our architecture solves this through a **2-cycle alternating scheduled access en
 <summary>Click to view Mermaid Source</summary>
 
 ```mermaid
-flowchart TD
-    P0["Phase 0: Parameter & Toolchain Lock<br/>(Spec, XDC Constraints, Part Lock)"] --> P1["Phase 1: Software Modeling & Precision Sweep<br/>(fft_float.py, fft_fixed.py, gen_vectors.py)"]
-    P1 --> P2["Phase 2: Arithmetic RTL & 4-Pt Prototype<br/>(complex_mult.sv, butterfly.sv, data_ram.sv, fft_top.sv)"]
-    P2 --> P3["Phase 3: Parameterized Scaling<br/>(N = 4, 8, 16, 32, 64 Regression)"]
-    P3 --> P4["Phase 4: 64-Pt Protocol Stress Testing<br/>(Valid Gaps, Backpressure, Contiguous Frames, Reset)"]
-    P4 --> P5["Phase 5: Numerical Error Analysis<br/>(SQNR, RMSE, Max Error across 12 Test Classes)"]
-    P5 --> P6["Phase 6: Physical Synthesis & Timing Closure<br/>(Vivado 2026.1 Batch Implementation on Alveo U50)"]
-    P6 --> P7["Phase 7: Comparative Scaling Study<br/>(Resource, Timing & Latency Tables)"]
-    P7 --> P8["Phase 8: Comprehensive Documentation & Viva Prep<br/>(Final Report, Architecture Spec, Presentation Package)"]
+flowchart TB
+    subgraph Row1 ["Row 1: Architecture Design, Software Modeling & Functional RTL Verification"]
+        direction LR
+        P0["<b>Phase 0: Spec Lock</b><br/>Spec & XDC Constraints"] --> P1["<b>Phase 1: Software Models</b><br/>Float, Fixed & 120 Vectors"]
+        P1 --> P2["<b>Phase 2: Arithmetic RTL</b><br/>4-DSP Butterfly Prototype"]
+        P2 --> P3["<b>Phase 3: Parameter Scaling</b><br/>N=4..64 Batch Regressions"]
+        P3 --> P4["<b>Phase 4: Protocol Stress</b><br/>AXI Bubbles, Stalls & Reset"]
+    end
+
+    subgraph Row2 ["Row 2: Physical Implementation, Precision Analysis & Deliverables"]
+        direction LR
+        P5["<b>Phase 5: Numerical Analysis</b><br/>SQNR > 65dB & 0-LSB Match"] --> P6["<b>Phase 6: Timing Closure</b><br/>Vivado 100MHz on Alveo U50"]
+        P6 --> P7["<b>Phase 7: Scaling Study</b><br/>Comparative Benchmarks"]
+        P7 --> P8["<b>Phase 8: Project Delivery</b><br/>DSP Report & GitHub"]
+    end
+
+    Row1 ==>|Functional Sign-off: 60/60 Suites Passed| Row2
 ```
 </details>
 
