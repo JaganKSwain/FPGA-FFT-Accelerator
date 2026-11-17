@@ -334,69 +334,77 @@ def generate_fig6_power():
 # Figure 7: 2-Phase Conflict-Free Memory Schedule Timing Diagram
 # =============================================================================
 def generate_fig7_schedule():
-    fig, ax = plt.subplots(figsize=(10, 4.8))
-
+    fig, ax = plt.subplots(figsize=(12, 6.2))
     cycles = np.arange(8)
-    phases = ["Read p, q", "Butterfly / Write A', B'", "Read p, q", "Butterfly / Write A', B'",
-              "Read p, q", "Butterfly / Write A', B'", "Read p, q", "Butterfly / Write A', B'"]
 
-    # Draw timeline bars
-    y_bram_a = 4
-    y_bram_b = 3
-    y_bf = 2
-    y_wr = 1
-
-    bar_height = 0.55
+    bar_height = 0.65
+    y_bf = 0.8
+    y_rom = 1.8
+    y_bram_b = 2.8
+    y_bram_a = 3.8
+    y_phase = 4.75
 
     for c in cycles:
         is_even = (c % 2 == 0)
         bf_idx = c // 2
         
+        # Phase banner (Row 4.75)
+        if is_even:
+            ax.barh(y_phase, 0.94, left=c+0.03, height=0.45, color='#e7f5ff', edgecolor='#1971c2', linewidth=1.4)
+            ax.text(c + 0.5, y_phase, 'READ PHASE\n(Cycle 2m: Dual Read)', ha='center', va='center', color='#0c8599', fontweight='bold', fontsize=7.8)
+        else:
+            ax.barh(y_phase, 0.94, left=c+0.03, height=0.45, color='#ebfbee', edgecolor='#2f9e44', linewidth=1.4)
+            ax.text(c + 0.5, y_phase, 'WRITE PHASE\n(Cycle 2m+1: Dual Write)', ha='center', va='center', color='#2b8a3e', fontweight='bold', fontsize=7.8)
+            
         # BRAM Port A
         if is_even:
-            ax.barh(y_bram_a, 1.0, left=c, height=bar_height, color='#3498db', edgecolor='black')
-            ax.text(c + 0.5, y_bram_a, f"READ addr $p_{bf_idx}$", ha='center', va='center', color='white', fontweight='bold', fontsize=8.5)
+            ax.barh(y_bram_a, 0.92, left=c+0.04, height=bar_height, color='#1971c2', edgecolor='#0c4a80', linewidth=1.2)
+            ax.text(c + 0.5, y_bram_a, f'READ\nAddr $p_{{{bf_idx}}}$', ha='center', va='center', color='white', fontweight='bold', fontsize=8.5)
         else:
-            ax.barh(y_bram_a, 1.0, left=c, height=bar_height, color='#2ecc71', edgecolor='black')
-            ax.text(c + 0.5, y_bram_a, f"WRITE $A'_{{{bf_idx-1}}}$", ha='center', va='center', color='black', fontweight='bold', fontsize=8.5)
+            ax.barh(y_bram_a, 0.92, left=c+0.04, height=bar_height, color='#2f9e44', edgecolor='#1e6b2d', linewidth=1.2)
+            ax.text(c + 0.5, y_bram_a, f'WRITE\nVal $A\'_{{{bf_idx}}}$', ha='center', va='center', color='white', fontweight='bold', fontsize=8.5)
 
         # BRAM Port B
         if is_even:
-            ax.barh(y_bram_b, 1.0, left=c, height=bar_height, color='#2980b9', edgecolor='black')
-            ax.text(c + 0.5, y_bram_b, f"READ addr $q_{bf_idx}$", ha='center', va='center', color='white', fontweight='bold', fontsize=8.5)
+            ax.barh(y_bram_b, 0.92, left=c+0.04, height=bar_height, color='#1c7ed6', edgecolor='#0c4a80', linewidth=1.2)
+            ax.text(c + 0.5, y_bram_b, f'READ\nAddr $q_{{{bf_idx}}}$', ha='center', va='center', color='white', fontweight='bold', fontsize=8.5)
         else:
-            ax.barh(y_bram_b, 1.0, left=c, height=bar_height, color='#27ae60', edgecolor='black')
-            ax.text(c + 0.5, y_bram_b, f"WRITE $B'_{{{bf_idx-1}}}$", ha='center', va='center', color='black', fontweight='bold', fontsize=8.5)
+            ax.barh(y_bram_b, 0.92, left=c+0.04, height=bar_height, color='#37b24d', edgecolor='#1e6b2d', linewidth=1.2)
+            ax.text(c + 0.5, y_bram_b, f'WRITE\nVal $B\'_{{{bf_idx}}}$', ha='center', va='center', color='white', fontweight='bold', fontsize=8.5)
 
         # Twiddle ROM
         if is_even:
-            ax.barh(y_bf, 1.0, left=c, height=bar_height, color='#f39c12', edgecolor='black')
-            ax.text(c + 0.5, y_bf, f"READ $W_N^{{k_{bf_idx}}}$", ha='center', va='center', color='black', fontweight='bold', fontsize=8.5)
+            ax.barh(y_rom, 0.92, left=c+0.04, height=bar_height, color='#f08c00', edgecolor='#c46a00', linewidth=1.2)
+            ax.text(c + 0.5, y_rom, f'READ ROM\nTwiddle $W_N^{{k_{{{bf_idx}}}}}$', ha='center', va='center', color='white', fontweight='bold', fontsize=8.2)
         else:
-            ax.barh(y_bf, 1.0, left=c, height=bar_height, color='#e67e22', edgecolor='black')
-            ax.text(c + 0.5, y_bf, "Multiply $B \\cdot W$", ha='center', va='center', color='white', fontweight='bold', fontsize=8.5)
+            ax.barh(y_rom, 0.92, left=c+0.04, height=bar_height, color='#e9ecef', edgecolor='#adb5bd', linewidth=1.0, linestyle='--')
+            ax.text(c + 0.5, y_rom, 'IDLE / HOLD\n(rom_en = 0)', ha='center', va='center', color='#495057', fontsize=7.8)
 
         # Butterfly Pipeline
-        ax.barh(y_wr, 1.0, left=c, height=bar_height, color='#9b59b6' if is_even else '#8e44ad', edgecolor='black')
-        ax.text(c + 0.5, y_wr, "Pipe Step" if is_even else "Stage Scale >> 1", ha='center', va='center', color='white', fontsize=8.5)
+        if is_even:
+            ax.barh(y_bf, 0.92, left=c+0.04, height=bar_height, color='#845ef7', edgecolor='#5f3dc4', linewidth=1.2)
+            ax.text(c + 0.5, y_bf, 'LATCH &\nPIPE ALIGN', ha='center', va='center', color='white', fontweight='bold', fontsize=8.2)
+        else:
+            ax.barh(y_bf, 0.92, left=c+0.04, height=bar_height, color='#7048e8', edgecolor='#5f3dc4', linewidth=1.2)
+            ax.text(c + 0.5, y_bf, 'COMPUTE\n$B \\cdot W$ & $\\pm A$', ha='center', va='center', color='white', fontweight='bold', fontsize=8.2)
 
-    ax.set_yticks([y_wr, y_bf, y_bram_b, y_bram_a])
-    ax.set_yticklabels(["Butterfly Pipeline", "Twiddle ROM Port", "True Dual-Port BRAM (Port B)", "True Dual-Port BRAM (Port A)"], fontweight='bold')
+    ax.set_yticks([y_bf, y_rom, y_bram_b, y_bram_a, y_phase])
+    ax.set_yticklabels(['Butterfly\nPipeline Unit', 'Twiddle ROM\n(Synchronous)', 'True Dual-Port\nBRAM (Port B)', 'True Dual-Port\nBRAM (Port A)', 'Operational\nAccess Phase'], fontweight='bold', fontsize=9.5)
     ax.set_xticks(np.arange(9))
-    ax.set_xticklabels([f"Cycle {i}" for i in range(9)])
-    ax.set_xlim(0, 8)
-    ax.set_ylim(0.4, 4.8)
-    ax.set_title("Conflict-Free 2-Phase True Dual-Port RAM Scheduling (2 Accesses/Cycle Maximum)")
+    ax.set_xticklabels([f'Cycle {i}' for i in range(9)], fontsize=9.5, fontweight='bold')
+    ax.set_xlim(-0.05, 8.05)
+    ax.set_ylim(-0.4, 5.3)
+    ax.set_title('Conflict-Free 2-Phase True Dual-Port Block RAM Scheduling Waveform (2 Accesses/Cycle Maximum)', fontsize=11.5, fontweight='bold', pad=14)
     ax.grid(axis='x', linestyle=':', alpha=0.6)
 
-    # Annotate phases
-    for c in range(0, 8, 2):
-        ax.text(c + 0.5, 4.55, "READ PHASE (Even)", ha='center', fontsize=8, color='#2980b9', fontweight='bold')
-        ax.text(c + 1.5, 4.55, "WRITE PHASE (Odd)", ha='center', fontsize=8, color='#27ae60', fontweight='bold')
+    # Bottom callout box
+    ax.text(4.0, -0.15, 'CONCURRENCY PROOF: At every clock cycle, BRAM port accesses = 2 (Even: 2 Reads, Odd: 2 Writes) <= 2 Physical Ports.\nGuarantees 100% Conflict-Free In-Place Execution on a Single RAMB36E2 Primitive with Zero Wait States.', 
+            ha='center', va='center', fontsize=8.5, fontweight='bold', color='#1e3a8a',
+            bbox=dict(boxstyle='round,pad=0.5', facecolor='#eff6ff', edgecolor='#3b82f6', linewidth=1.2))
 
     plt.tight_layout()
     out_path = "docs/figures/fig7_memory_schedule.png"
-    plt.savefig(out_path)
+    plt.savefig(out_path, dpi=300)
     plt.close()
     print(f"[Done] Generated {out_path}")
 
