@@ -6,6 +6,11 @@ This document details the microarchitecture, memory subsystem, pipeline timing, 
 
 ## 1. Top-Level Architectural Block Diagram
 
+![Top-Level Architectural Block Diagram](figures/diagrams/architecture_block_diagram.png)
+
+<details>
+<summary>Click to view Mermaid Source</summary>
+
 ```mermaid
 graph TD
     subgraph AXI_Stream_Interfaces [AXI4-Stream Interfaces]
@@ -44,6 +49,7 @@ graph TD
     BF_ALU -->|Writeback B' to q| BRAM
     BRAM -->|UNLOAD natural order| m_axis
 ```
+</details>
 
 ---
 
@@ -91,6 +97,11 @@ BF ALU Out:    --    --    --    --    --   BF0'   --   BF1'   --
 
 ## 4. FSM Controller State Transition
 
+![FSM Controller State Transition Diagram](figures/diagrams/fsm_state_transition.png)
+
+<details>
+<summary>Click to view Mermaid Source</summary>
+
 ```mermaid
 stateDiagram-v2
     [*] --> ST_IDLE
@@ -108,6 +119,7 @@ stateDiagram-v2
     ST_UNLOAD --> ST_DONE: All N bins accepted (unload_cnt == N)
     ST_DONE --> ST_IDLE: Return to ready state
 ```
+</details>
 
 ---
 

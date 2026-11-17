@@ -1,0 +1,15 @@
+stateDiagram-v2
+    [*] --> ST_IDLE
+    ST_IDLE --> ST_LOAD: s_axis_tvalid asserted (Sample 0 written to bit_rev(0))
+    ST_LOAD --> ST_LOAD: s_axis_tvalid (Samples 1 to N-2)
+    ST_LOAD --> ST_COMPUTE: Sample N-1 received (load_cnt == N-1)
+    
+    ST_COMPUTE --> ST_COMPUTE: Phase 0 (Read) <-> Phase 1 (Launch) for N/2 butterflies
+    ST_COMPUTE --> ST_DRAIN: All N/2 butterflies launched (phase == 1 && bf_cnt == N/2 - 1)
+    
+    ST_DRAIN --> ST_COMPUTE: Next Stage (written_cnt == N/2 && stage_cnt < LOG2_N)
+    ST_DRAIN --> ST_UNLOAD: All Stages Finished (written_cnt == N/2 && stage_cnt == LOG2_N)
+    
+    ST_UNLOAD --> ST_UNLOAD: Stream out N frequency bins (m_axis_tvalid && m_axis_tready)
+    ST_UNLOAD --> ST_DONE: All N bins accepted (unload_cnt == N)
+    ST_DONE --> ST_IDLE: Return to ready state

@@ -1,0 +1,9 @@
+flowchart TD
+    P0["Phase 0: Parameter & Toolchain Lock<br/>(Spec, XDC Constraints, Part Lock)"] --> P1["Phase 1: Software Modeling & Precision Sweep<br/>(fft_float.py, fft_fixed.py, gen_vectors.py)"]
+    P1 --> P2["Phase 2: Arithmetic RTL & 4-Pt Prototype<br/>(complex_mult.sv, butterfly.sv, data_ram.sv, fft_top.sv)"]
+    P2 --> P3["Phase 3: Parameterized Scaling<br/>(N = 4, 8, 16, 32, 64 Regression)"]
+    P3 --> P4["Phase 4: 64-Pt Protocol Stress Testing<br/>(Valid Gaps, Backpressure, Contiguous Frames, Reset)"]
+    P4 --> P5["Phase 5: Numerical Error Analysis<br/>(SQNR, RMSE, Max Error across 12 Test Classes)"]
+    P5 --> P6["Phase 6: Physical Synthesis & Timing Closure<br/>(Vivado 2026.1 Batch Implementation on Alveo U50)"]
+    P6 --> P7["Phase 7: Comparative Scaling Study<br/>(Resource, Timing & Latency Tables)"]
+    P7 --> P8["Phase 8: Comprehensive Documentation & Viva Prep<br/>(Final Report, Architecture Spec, Presentation Package)"]

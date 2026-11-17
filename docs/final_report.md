@@ -62,6 +62,9 @@ Implemented in SystemVerilog in [`rtl/fixed_point_pkg.sv`](file:///c:/Users/jaga
 
 ## 3. Microarchitectural Implementation
 
+![Top-Level Architecture Block Diagram](figures/diagrams/architecture_block_diagram.png)
+*Figure 3.1: Top-Level Accelerator Microarchitecture ([architecture_block_diagram.png](file:///c:/Users/jagan/OneDrive/Documents/DSP_Project/docs/figures/diagrams/architecture_block_diagram.png)), detailing streaming AXI4-Stream interfaces, FSM controller, True Dual-Port Block RAM, twiddle ROM, and pipelined arithmetic butterfly datapath.*
+
 ### Memory Subsystem & Port Contention Resolution
 A critical hazard in iterative FFT architectures is the **4-access-per-cycle bottleneck**: computing 1 butterfly per cycle requires 2 memory reads ($A, B$) and 2 memory writes ($A', B'$), which exceeds the 2 physical ports of standard FPGA True Dual-Port Block RAM.
 
@@ -102,6 +105,9 @@ Our design resolves this through a **2-cycle scheduled conflict-free access pipe
 - **`ST_COMPUTE`:** Loops through stages $s = 1 \dots \log_2 N$. Generates butterfly addresses $p, q$ and twiddle index $k$ in 2-cycle alternating phases.
 - **`ST_DRAIN`:** Flushes the 4-cycle arithmetic pipeline at the end of each stage before starting the next stage, completely preventing Read-After-Write (RAW) data hazards.
 - **`ST_UNLOAD`:** Reads out RAM in sequential order $0 \dots N-1$ onto `m_axis_tdata` with `m_axis_tvalid = 1` and `m_axis_tlast = 1` on the final bin. Supports full downstream backpressure (`m_axis_tready`).
+
+![FSM Controller State Transition Diagram](figures/diagrams/fsm_state_transition.png)
+*Figure 3.2: FSM Controller State Transition Diagram ([fsm_state_transition.png](file:///c:/Users/jagan/OneDrive/Documents/DSP_Project/docs/figures/diagrams/fsm_state_transition.png)), illustrating in-place bit-reversed sample ingestion, 2-phase compute looping, inter-stage pipeline draining, and natural sequential unloading.*
 
 ---
 

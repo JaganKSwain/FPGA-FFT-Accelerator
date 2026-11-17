@@ -97,6 +97,11 @@ Our architecture solves this through a **2-cycle alternating scheduled access en
 
 ## E. Procedure / Steps Followed
 
+![Procedure & 9-Phase Engineering Workflow Flowchart](figures/diagrams/procedure_flowchart.png)
+
+<details>
+<summary>Click to view Mermaid Source</summary>
+
 ```mermaid
 flowchart TD
     P0["Phase 0: Parameter & Toolchain Lock<br/>(Spec, XDC Constraints, Part Lock)"] --> P1["Phase 1: Software Modeling & Precision Sweep<br/>(fft_float.py, fft_fixed.py, gen_vectors.py)"]
@@ -108,6 +113,7 @@ flowchart TD
     P6 --> P7["Phase 7: Comparative Scaling Study<br/>(Resource, Timing & Latency Tables)"]
     P7 --> P8["Phase 8: Comprehensive Documentation & Viva Prep<br/>(Final Report, Architecture Spec, Presentation Package)"]
 ```
+</details>
 
 ### Detailed Execution Steps
 

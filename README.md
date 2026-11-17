@@ -27,6 +27,11 @@ Targeted for real-time digital signal processing, spectral analysis, and edge se
 
 ## 2. Architecture & Block Diagram
 
+![Top-Level Architecture Block Diagram](docs/figures/diagrams/architecture_block_diagram.png)
+
+<details>
+<summary>Click to view Mermaid Diagram Source</summary>
+
 ```mermaid
 graph TD
     subgraph AXI_Stream_Interfaces [AXI4-Stream Interfaces]
@@ -65,6 +70,7 @@ graph TD
     BF_ALU -->|Writeback B' to q| BRAM
     BRAM -->|UNLOAD natural order| m_axis
 ```
+</details>
 
 ---
 

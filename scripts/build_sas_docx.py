@@ -164,11 +164,17 @@ def build_sas_report():
     add_image_with_caption(d_cell, "docs/figures/fig7_memory_schedule.png",
                            "Figure D.1: Conflict-Free 2-Phase True Dual-Port Block RAM Scheduling Waveform", 5.2)
 
+    add_image_with_caption(d_cell, "docs/figures/diagrams/architecture_block_diagram.png",
+                           "Figure D.2: Top-Level Iterative Single-Butterfly FFT Accelerator Hardware Architecture", 5.2)
+
     # -------------------------------------------------------------------------
     # Table 4: Section E - Procedure / Steps Followed
     # -------------------------------------------------------------------------
     e_cell = doc.tables[4].rows[0].cells[0]
     e_cell.text = ""
+    
+    add_image_with_caption(e_cell, "docs/figures/diagrams/procedure_flowchart.png",
+                           "Figure E.1: 9-Phase Deterministic Engineering Implementation Flowchart", 5.2)
     
     add_styled_paragraph(e_cell, "The implementation followed a rigorous 9-phase deterministic engineering pipeline:\n\n"
                                  "• Phase 0 (Spec Lock): Centrally locked all architecture parameters in config/project_spec.json. Created timing constraint timing.xdc with 10.0 ns (100 MHz) target.\n\n"

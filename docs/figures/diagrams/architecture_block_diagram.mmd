@@ -1,0 +1,35 @@
+graph TD
+    subgraph AXI_Stream_Interfaces [AXI4-Stream Interfaces]
+        s_axis["s_axis_tdata[31:0]<br/>s_axis_tvalid<br/>s_axis_tready<br/>s_axis_tlast"]
+        m_axis["m_axis_tdata[31:0]<br/>m_axis_tvalid<br/>m_axis_tready<br/>m_axis_tlast"]
+    end
+
+    subgraph Control_Unit [Control & Address Generation]
+        FSM["fft_controller FSM<br/>(IDLE, LOAD, COMPUTE, DRAIN, UNLOAD)"]
+        BitRev["Bit-Reversal Unit<br/>(Direct in-place loading)"]
+        AddrGen["DIT Butterfly Address Gen<br/>(p, q, twiddle k)"]
+    end
+
+    subgraph Memory_Subsystem [Memory Subsystem]
+        BRAM["data_ram (True Dual-Port BRAM)<br/>Port A: Addr P (Read/Write)<br/>Port B: Addr Q (Read/Write)"]
+        ROM["twiddle_rom (Synchronous ROM)<br/>Depth: N/2 words (Q2.14)"]
+    end
+
+    subgraph Datapath [Pipelined Arithmetic Engine]
+        DelayA["Operand A Delay Pipeline<br/>(3 Register Stages)"]
+        CMULT["complex_mult (3 Stages)<br/>4-DSP Pipelined (16x16 -> 32)<br/>14-bit Convergent Rounding"]
+        BF_ALU["Butterfly ALU Stage 4<br/>A' = (A + T) / 2<br/>B' = (A - T) / 2<br/>1-bit Convergent Round & Sat"]
+    end
+
+    s_axis -->|LOAD bit-reversed| BRAM
+    FSM --> AddrGen
+    FSM --> BitRev
+    AddrGen -->|Read addra=p, addrb=q| BRAM
+    AddrGen -->|rom_addr=k| ROM
+    BRAM -->|douta = A| DelayA
+    BRAM -->|doutb = B| CMULT
+    ROM -->|tw_data = W| CMULT
+    DelayA -->|Delayed A| BF_ALU
+    CMULT -->|T = B * W| BF_ALU
+    BF_ALU -->|Writeback A' to p| BRAM
+    BF_ALU -->|Writeback B' to q| BRAM
