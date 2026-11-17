@@ -1,22 +1,20 @@
 """
-export_to_latex.py - Converts docs/DSP_Report.docx into an exact, publication-quality
-LaTeX document (docs/DSP_Report.tex) matching the SAS Submission Format, preserving
-all student metadata, complete mathematical formatting, and all 10 embedded figures.
+Script to generate publication-grade LaTeX report (DSP_Report.tex)
+matching the exact formatting and structure of docs/DSP_Report.docx.
 """
-
 import os
 
-latex_content = r"""\documentclass[10pt,a4paper]{article}
+LATEX_CONTENT = r"""\documentclass[10pt,a4paper]{article}
 
 % --- Essential Packages ---
-\usepackage[top=20mm,bottom=20mm,left=18mm,right=18mm]{geometry}
+\usepackage[top=18mm,bottom=18mm,left=16mm,right=16mm]{geometry}
 \usepackage{amsmath,amssymb,amsfonts}
 \usepackage{graphicx}
 \usepackage{tabularx}
 \usepackage{booktabs}
 \usepackage{xcolor}
 \usepackage{colortbl}
-\usepackage[most]{tcolorbox}
+\usepackage{tcolorbox}
 \usepackage{enumitem}
 \usepackage{caption}
 \usepackage{float}
@@ -42,26 +40,35 @@ latex_content = r"""\documentclass[10pt,a4paper]{article}
     urlcolor=accentblue
 }
 
-% --- TColorBox Styling for Section Frames ---
-\tcbset{
-    reportbox/.style={
-        enhanced,
-        colback=boxbg,
-        colframe=bordergray,
-        arc=1.5mm,
-        boxrule=0.8pt,
-        left=5mm,
-        right=5mm,
-        top=4mm,
-        bottom=4mm,
-        boxsep=1mm
-    }
+% --- Caption Styling ---
+\captionsetup{
+    font=small,
+    labelfont={bf,color=headerblue},
+    textfont=it,
+    skip=4pt
+}
+
+% --- Custom Section Banner Command ---
+\newcommand{\reportsection}[1]{%
+  \vspace{3mm}%
+  \noindent
+  \begin{tcolorbox}[
+    colback=tableheaderbg,
+    colframe=bordergray,
+    arc=1.2mm,
+    boxrule=0.8pt,
+    left=4mm, right=4mm, top=2.2mm, bottom=2.2mm
+  ]
+    {\Large\bfseries\color{headerblue}#1}
+  \end{tcolorbox}%
+  \vspace{1mm}%
 }
 
 % --- Formatting Helpers ---
 \setlength{\parindent}{0pt}
-\setlength{\parskip}{4pt}
-\setlist[itemize]{leftmargin=5mm, itemsep=2pt, topsep=2pt}
+\setlength{\parskip}{3.5pt}
+\setlist[itemize]{leftmargin=5mm, itemsep=1.5pt, topsep=1.5pt}
+\setlist[enumerate]{leftmargin=5mm, itemsep=1.5pt, topsep=1.5pt}
 
 \begin{document}
 
@@ -81,7 +88,7 @@ Faculty Name & Prof. Bibhuti Bhusan Mishra & Date of Submission & November 17, 2
 \hline
 \end{tabularx}
 
-\vspace{3mm}
+\vspace{2.5mm}
 
 % =============================================================================
 % TABLE 1: PROJECT DETAILS
@@ -103,32 +110,23 @@ Full Link of Tool & \url{https://github.com/JaganKSwain/FPGA-FFT-Accelerator} \n
 \hline
 \end{tabularx}
 
-\vspace{4mm}
-
 % =============================================================================
 % SECTION C: AIM / OBJECTIVES
 % =============================================================================
-\begin{tcolorbox}[reportbox]
-{\Large\bfseries\color{headerblue}C. Aim \& Objectives of the Project}
-\vspace{2mm}
+\reportsection{C. Aim \& Objectives of the Project}
 
-\begin{enumerate}[label=\bfseries\arabic*., leftmargin=6mm, itemsep=4pt]
+\begin{enumerate}[label=\bfseries\arabic*., leftmargin=6mm, itemsep=3pt]
     \item \textbf{Primary Architectural Objective:} To design, model, simulate, verify, and physically synthesize an iterative, single Radix-2 Decimation-In-Time (DIT) Fast Fourier Transform (FFT) hardware accelerator on an FPGA using SystemVerilog with stall-tolerant streaming AXI4-Stream interfaces.
     \item \textbf{Two-Tier Verification Methodology:} To establish a rigorous two-tier verification methodology guaranteeing a 100\% exact 0-LSB match between RTL and a golden fixed-point Python model across all frequency bins, while validating spectral fidelity ($\text{SQNR} > 65.0\text{ dB}$, $\text{RMSE} \le 0.8\text{ LSB}$) against double-precision NumPy references.
     \item \textbf{In-Place Dual-Port RAM Scheduling:} To resolve the physical 4-access-per-cycle True Dual-Port Block RAM contention hazard using a conflict-free 2-phase scheduled access pipeline (Even cycles: Dual Read; Odd cycles: Dual Write).
     \item \textbf{Fixed-Point Precision \& Rounding Policy:} To implement convergent rounding (round-to-nearest-even) and symmetric saturation clamping to eliminate DC accumulation bias and prevent limit-cycle overflow wrapping.
     \item \textbf{Timing Closure \& Power Optimization:} To achieve physical timing closure at $\ge 100.0\text{ MHz}$ on an AMD Alveo U50 Accelerator FPGA (\texttt{xcu50-fsvh2104-2-e}, UltraScale+) with minimal hardware footprint and milliwatt-level dynamic power ($4\text{ mW}$).
 \end{enumerate}
-\end{tcolorbox}
-
-\vspace{4mm}
 
 % =============================================================================
 % SECTION D: THEORY (KEY EQUATIONS & CONCEPTS)
 % =============================================================================
-\begin{tcolorbox}[reportbox]
-{\Large\bfseries\color{headerblue}D. Theory (Key Equations / Concepts Used)}
-\vspace{2mm}
+\reportsection{D. Theory (Key Equations / Concepts Used)}
 
 \subsection*{1. Discrete Fourier Transform (DFT) Mathematical Definition}
 The Discrete Fourier Transform of an $N$-point discrete-time sequence $x[n]$ is defined mathematically as:
@@ -189,8 +187,8 @@ Each butterfly demands 2 memory reads (operands $p, q$) and 2 memory writes (res
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.95\textwidth]{fig7_memory_schedule.png}
-\caption{\textbf{Figure D.1:} Conflict-Free 2-Phase True Dual-Port Block RAM Scheduling Waveform (2 Accesses/Cycle Maximum).}
+\includegraphics[width=0.92\textwidth]{fig7_memory_schedule.png}
+\caption{Conflict-Free 2-Phase True Dual-Port Block RAM Scheduling Waveform (2 Accesses/Cycle Maximum).}
 \end{figure}
 
 \subsection*{7. Top-Level Accelerator Hardware Architecture}
@@ -205,8 +203,8 @@ The hardware accelerator comprises five dedicated functional blocks integrated v
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.92\textwidth]{architecture_block_diagram.png}
-\caption{\textbf{Figure D.2:} Top-Level Iterative Single-Butterfly FFT Accelerator Hardware Architecture.}
+\includegraphics[width=0.72\textwidth]{architecture_block_diagram.png}
+\caption{Top-Level Iterative Single-Butterfly FFT Accelerator Hardware Architecture.}
 \end{figure}
 
 \subsection*{8. Finite State Machine (FSM) Controller Specification}
@@ -221,27 +219,21 @@ The central FSM (\texttt{fft\_controller.sv}) coordinates execution across 5 sta
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.88\textwidth]{fsm_state_transition.png}
-\caption{\textbf{Figure D.3:} Finite State Machine (FSM) Controller State Transition Graph.}
+\includegraphics[width=0.68\textwidth]{fsm_state_transition.png}
+\caption{Finite State Machine (FSM) Controller State Transition Graph.}
 \end{figure}
-
-\end{tcolorbox}
-
-\vspace{4mm}
 
 % =============================================================================
 % SECTION E: PROCEDURE / STEPS FOLLOWED
 % =============================================================================
-\begin{tcolorbox}[reportbox]
-{\Large\bfseries\color{headerblue}E. Procedure / Steps Followed}
-\vspace{2mm}
+\reportsection{E. Procedure / Steps Followed}
 
 The accelerator implementation followed a rigorous 9-phase deterministic engineering design and verification flow:
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.95\textwidth]{procedure_flowchart.png}
-\caption{\textbf{Figure E.1:} 9-Phase Engineering Design, Implementation \& Verification Methodology Flowchart (Compact 2-Row Workflow).}
+\includegraphics[width=0.92\textwidth]{procedure_flowchart.png}
+\caption{9-Phase Engineering Design, Implementation \& Verification Methodology Flowchart (Compact 2-Row Workflow).}
 \end{figure}
 
 \begin{itemize}
@@ -253,16 +245,11 @@ The accelerator implementation followed a rigorous 9-phase deterministic enginee
     \item \textbf{Phase 5 \& 6 (Physical Synthesis, Placement, Routing \& Timing Closure):} Executed headless out-of-context implementation in Vivado 2026.1 targeting AMD Alveo U50. Achieved positive slack $\text{WNS} = +6.706\text{ ns}$ ($F_{\max} = 303.58\text{ MHz}$) and dynamic power of $4\text{ mW}$.
     \item \textbf{Phase 7 \& 8 (Comparative Study \& Technical Package):} Populated comparative scaling tables and finalized documentation.
 \end{itemize}
-\end{tcolorbox}
-
-\vspace{4mm}
 
 % =============================================================================
 % SECTION F: RESULT / OBSERVATION
 % =============================================================================
-\begin{tcolorbox}[reportbox]
-{\Large\bfseries\color{headerblue}F. Result / Observation}
-\vspace{2mm}
+\reportsection{F. Result / Observation}
 
 \subsection*{F1. Post-Route Hardware Resource Utilization (AMD Alveo U50)}
 The design was placed and routed on an AMD Alveo U50 FPGA (\texttt{xcu50-fsvh2104-2-e}, UltraScale+ 16nm architecture):
@@ -270,7 +257,7 @@ The design was placed and routed on an AMD Alveo U50 FPGA (\texttt{xcu50-fsvh210
 \begin{table}[H]
 \centering
 \small
-\begin{tabular}{|l|c|c|c|l|}
+\begin{tabularx}{\textwidth}{|l|c|c|c|>{\raggedright\arraybackslash}X|}
 \hline
 \rowcolor{tableheaderbg}
 \bfseries Resource Primitive & \bfseries Used & \bfseries Total on Device & \bfseries Utilization (\%) & \bfseries Function in Accelerator \\
@@ -281,13 +268,13 @@ The design was placed and routed on an AMD Alveo U50 FPGA (\texttt{xcu50-fsvh210
 \textbf{Block RAM (RAMB36E2)} & \textbf{1} & 1,344 & \textbf{0.074\%} & Inferred True Dual-Port Block RAM ($64 \times 32$ bits) \\
 \textbf{UltraRAM / Distributed RAM} & \textbf{0} & — & \textbf{0.00\%} & Pure Block RAM implementation \\
 \hline
-\end{tabular}
+\end{tabularx}
 \end{table}
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.88\textwidth]{fig4_resource_breakdown.png}
-\caption{\textbf{Figure F.1:} Post-Route FPGA Resource Breakdown on AMD Alveo U50 (Budget Percentage and Dedicated Primitive Counts).}
+\includegraphics[width=0.82\textwidth]{fig4_resource_breakdown.png}
+\caption{Post-Route FPGA Resource Breakdown on AMD Alveo U50 (Budget Percentage and Dedicated Primitive Counts).}
 \end{figure}
 
 \subsection*{F2. Post-Route Static Timing Summary (@ 100.0 MHz Target / 10.000 ns Period)}
@@ -295,7 +282,7 @@ The design was placed and routed on an AMD Alveo U50 FPGA (\texttt{xcu50-fsvh210
 \begin{table}[H]
 \centering
 \small
-\begin{tabular}{|l|c|c|c|}
+\begin{tabularx}{\textwidth}{|l|c|c|>{\raggedright\arraybackslash}X|}
 \hline
 \rowcolor{tableheaderbg}
 \bfseries Timing Metric & \bfseries Achieved Value & \bfseries Constraint Specification & \bfseries Timing Status \\
@@ -307,7 +294,7 @@ The design was placed and routed on an AMD Alveo U50 FPGA (\texttt{xcu50-fsvh210
 \textbf{Target Clock Frequency} & $100.00\text{ MHz}$ & $100.00\text{ MHz}$ & Baseline Project Constraint \\
 \textbf{Derived Maximum Clock ($F_{\max}$)} & \textbf{303.58 MHz} & — & \textbf{3.04$\times$ Operating Timing Headroom} \\
 \hline
-\end{tabular}
+\end{tabularx}
 \end{table}
 
 The maximum clock frequency is derived from the critical datapath delay:
@@ -317,8 +304,8 @@ T_{\min} = T_{\text{clk}} - \text{WNS} = 10.000\text{ ns} - 6.706\text{ ns} = 3.
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.85\textwidth]{fig5_timing_and_fmax.png}
-\caption{\textbf{Figure F.2:} Static Timing Closure, Setup Slack (+6.706 ns), and Fmax (303.58 MHz) Breakdown.}
+\includegraphics[width=0.78\textwidth]{fig5_timing_and_fmax.png}
+\caption{Static Timing Closure, Setup Slack (+6.706 ns), and Fmax (303.58 MHz) Breakdown.}
 \end{figure}
 
 \subsection*{F3. Power Dissipation \& Energy Efficiency Profile}
@@ -334,8 +321,8 @@ T_{\min} = T_{\text{clk}} - \text{WNS} = 10.000\text{ ns} - 6.706\text{ ns} = 3.
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.88\textwidth]{fig6_power_and_energy.png}
-\caption{\textbf{Figure F.3:} Power Dissipation (Dynamic vs. Static) \& Energy-per-Transform Profile.}
+\includegraphics[width=0.82\textwidth]{fig6_power_and_energy.png}
+\caption{Power Dissipation (Dynamic vs. Static) \& Energy-per-Transform Profile.}
 \end{figure}
 
 \subsection*{F4. Cycle-Accurate Execution Latency \& Throughput Profile ($N=64$ @ 100 MHz)}
@@ -343,7 +330,7 @@ T_{\min} = T_{\text{clk}} - \text{WNS} = 10.000\text{ ns} - 6.706\text{ ns} = 3.
 \begin{table}[H]
 \centering
 \small
-\begin{tabular}{|l|c|c|l|}
+\begin{tabularx}{\textwidth}{|l|c|c|>{\raggedright\arraybackslash}X|}
 \hline
 \rowcolor{tableheaderbg}
 \bfseries Pipeline Phase & \bfseries Clock Cycles & \bfseries Real-Time Latency & \bfseries Functional Operation \\
@@ -356,13 +343,13 @@ T_{\min} = T_{\text{clk}} - \text{WNS} = 10.000\text{ ns} - 6.706\text{ ns} = 3.
 \textbf{Sustained Transform Throughput} & — & \textbf{184,162 transforms/sec} & \textbf{559,079 transforms/sec (@ 303.58 MHz)} \\
 \textbf{Continuous Sample Bandwidth} & — & \textbf{11.78 Msamples/sec} & \textbf{35.78 Msamples/sec (@ 303.58 MHz)} \\
 \hline
-\end{tabular}
+\end{tabularx}
 \end{table}
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.85\textwidth]{fig3_latency_scaling.png}
-\caption{\textbf{Figure F.4:} Latency Breakdown (Load, Compute, Unload) Across Transform Sizes ($N=4$ to $64$).}
+\includegraphics[width=0.78\textwidth]{fig3_latency_scaling.png}
+\caption{Latency Breakdown (Load, Compute, Unload) Across Transform Sizes ($N=4$ to $64$).}
 \end{figure}
 
 \subsection*{F5. Numerical Precision \& Spectral Quality Performance ($N=64$ across 12 Classes)}
@@ -370,7 +357,7 @@ T_{\min} = T_{\text{clk}} - \text{WNS} = 10.000\text{ ns} - 6.706\text{ ns} = 3.
 \begin{table}[H]
 \centering
 \small
-\begin{tabular}{|l|c|c|c|c|}
+\begin{tabularx}{\textwidth}{|l|c|c|c|>{\centering\arraybackslash}X|}
 \hline
 \rowcolor{tableheaderbg}
 \bfseries Test Signal Class & \bfseries SQNR (dB) & \bfseries RMSE (LSB) & \bfseries Max Abs Error & \bfseries RTL Mismatch \\
@@ -388,35 +375,29 @@ T_{\min} = T_{\text{clk}} - \text{WNS} = 10.000\text{ ns} - 6.706\text{ ns} = 3.
 \texttt{pos\_full\_scale} ($+32767$) & 114.92 dB & 0.0000 & 0.0 LSB & \textbf{PASS (0 LSB)} \\
 \texttt{neg\_full\_scale} ($-32768$) & 114.92 dB & 0.0000 & 0.0 LSB & \textbf{PASS (0 LSB)} \\
 \hline
-\end{tabular}
+\end{tabularx}
 \end{table}
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.92\textwidth]{fig1_spectral_comparison.png}
-\caption{\textbf{Figure F.5:} Spectral Response \& 0-LSB Hardware Residual Error (Two-Tone Signal, $N=64$).}
+\includegraphics[width=0.85\textwidth]{fig1_spectral_comparison.png}
+\caption{Spectral Response \& 0-LSB Hardware Residual Error (Two-Tone Signal, $N=64$).}
 \end{figure}
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.92\textwidth]{fig2_sqnr_rmse_profile.png}
-\caption{\textbf{Figure F.6:} SQNR and RMSE Precision Distribution Across 11 Standard Test Classes.}
+\includegraphics[width=0.85\textwidth]{fig2_sqnr_rmse_profile.png}
+\caption{SQNR and RMSE Precision Distribution Across 11 Standard Test Classes.}
 \end{figure}
-
-\end{tcolorbox}
-
-\vspace{4mm}
 
 % =============================================================================
 % SECTION G: VERIFICATION
 % =============================================================================
-\begin{tcolorbox}[reportbox]
-{\Large\bfseries\color{headerblue}G. Verification (Tool \& Model Cross-Check)}
-\vspace{2mm}
+\reportsection{G. Verification (Tool \& Model Cross-Check)}
 
 The accelerator underwent automated multi-level verification in AMD Vivado Simulator (\texttt{xsim} v2026.1):
 
-\begin{enumerate}[label=\bfseries\arabic*., leftmargin=6mm, itemsep=4pt]
+\begin{enumerate}[label=\bfseries\arabic*., leftmargin=6mm, itemsep=3pt]
     \item \textbf{Unit-Level Arithmetic Verification:}
     \begin{itemize}
         \item \texttt{tb\_complex\_mult.sv}: Verified identity ($W^0$), quadrature rotation ($-j$), non-trivial angle ($W_8^1$), full-scale negative boundary ($-32768 \times -32768$), and 50 randomized vectors. \textbf{Result: 57/57 PASSED (0 LSB mismatch)}.
@@ -426,7 +407,7 @@ The accelerator underwent automated multi-level verification in AMD Vivado Simul
     \begin{table}[H]
     \centering
     \small
-    \begin{tabular}{|c|c|c|c|c|c|}
+    \begin{tabularx}{\textwidth}{|c|c|c|c|c|>{\centering\arraybackslash}X|}
     \hline
     \rowcolor{tableheaderbg}
     \bfseries Transform Size ($N$) & \bfseries Stages & \bfseries Butterflies & \bfseries Test Classes & \bfseries Mismatches & \bfseries Status \\
@@ -439,7 +420,7 @@ The accelerator underwent automated multi-level verification in AMD Vivado Simul
     \hline
     \multicolumn{4}{|l|}{\textbf{Total Checked Output Bins: 1,536}} & \textbf{0} & \textbf{100\% PASS} \\
     \hline
-    \end{tabular}
+    \end{tabularx}
     \end{table}
     \item \textbf{Protocol Stress \& Fault Tolerance Testing (\texttt{tb\_fft\_protocol\_stress.sv}):}
     \begin{itemize}
@@ -449,32 +430,27 @@ The accelerator underwent automated multi-level verification in AMD Vivado Simul
         \item \textbf{Mid-Frame Synchronous Reset Recovery:} Cleanly re-synchronized on subsequent frame.
     \end{itemize}
 \end{enumerate}
-\end{tcolorbox}
-
-\vspace{4mm}
 
 % =============================================================================
 % SECTION H: CONCLUSION
 % =============================================================================
-\begin{tcolorbox}[reportbox]
-{\Large\bfseries\color{headerblue}H. Conclusion \& Key Findings}
-\vspace{2mm}
+\reportsection{H. Conclusion \& Key Findings}
 
-\begin{enumerate}[label=\bfseries\arabic*., leftmargin=6mm, itemsep=4pt]
+\begin{enumerate}[label=\bfseries\arabic*., leftmargin=6mm, itemsep=3pt]
     \item \textbf{Architectural Success:} A highly compact, iterative single Radix-2 DIT butterfly FFT accelerator was successfully designed, simulated, and implemented. Reusing a single 4-DSP complex multiplier and butterfly engine across all stages reduces DSP consumption by \textbf{83.3\%} compared to fully pipelined streaming architectures (4 DSPs vs. 24 DSPs) while maintaining a high sustained throughput of \textbf{184,162 transforms/second}.
     \item \textbf{Hazard Resolution:} The 2-cycle scheduled access engine completely resolves the 4-access/cycle True Dual-Port RAM contention hazard, enabling conflict-free in-place computation directly in a single dedicated Block RAM primitive (\texttt{RAMB36E2}) with zero wait states.
     \item \textbf{Physical \& Numerical Excellence:} The implementation achieved complete physical timing closure on an AMD Alveo U50 FPGA with \textbf{+6.706 ns WNS ($F_{\max} = 303.58\text{ MHz}$)} and only \textbf{4 mW dynamic logic power}. Numerical accuracy exceeded targets with $> 67.8\text{ dB}$ SQNR on random noise and $> 114.9\text{ dB}$ on tones.
     \item \textbf{Two-Tier Verification Gate:} Exact bit-accurate match (\textbf{0 LSB mismatch across all 60 test suites}) was demonstrated against the fixed-point golden model, confirming production-grade reliability for real-time DSP systems.
 \end{enumerate}
-\end{tcolorbox}
-
-\vspace{4mm}
 
 % =============================================================================
 % SECTION I: FACULTY EVALUATION
 % =============================================================================
+\vspace{2mm}
+\reportsection{I. Evaluation Scheme \& Rubric}
+
 \noindent
-\begin{tabularx}{\textwidth}{|>{\bfseries\color{headerblue}\columncolor{tableheaderbg}}p{8cm}|>{\centering\bfseries\columncolor{tableheaderbg}}p{3.5cm}|>{\centering\columncolor{tableheaderbg}}X|}
+\begin{tabularx}{\textwidth}{|>{\bfseries\color{headerblue}\columncolor{tableheaderbg}}p{8cm}|>{\centering\bfseries\columncolor{tableheaderbg}}p{3.5cm}|>{\centering\columncolor{tableheaderbg}\arraybackslash}X|}
 \hline
 \rowcolor{tableheaderbg}
 \bfseries Parameter & \bfseries Max Marks & \bfseries Marks Obtained \\
@@ -497,7 +473,11 @@ Conclusion \& Viva & 10 & \\
 \end{document}
 """
 
-with open("docs/DSP_Report.tex", "w", encoding="utf-8") as f:
-    f.write(latex_content)
+def main():
+    target_path = os.path.join(os.path.dirname(__file__), "..", "docs", "DSP_Report.tex")
+    with open(target_path, "w", encoding="utf-8") as f:
+        f.write(LATEX_CONTENT.strip() + "\n")
+    print(f"Successfully generated {target_path} ({len(LATEX_CONTENT)} characters)!")
 
-print(f"Successfully generated docs/DSP_Report.tex ({len(latex_content)} characters)!")
+if __name__ == "__main__":
+    main()

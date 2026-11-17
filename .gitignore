@@ -31,3 +31,8 @@ __pycache__/
 # Operating System
 Thumbs.db
 .DS_Store
+
+# Local tools and LaTeX build artifacts
+tools/
+*.xdv
+
