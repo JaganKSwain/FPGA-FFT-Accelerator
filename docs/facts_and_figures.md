@@ -160,7 +160,7 @@ This document provides a consolidated, publication-quality compendium of all vis
 ## 6. Document Export Status
 
 All figures and tables in this dossier have been exported and integrated into:
-1. **Word Submission Document:** [`docs/FPGA_FFT_Accelerator_SAS_Report_Updated.docx`](file:///c:/Users/jagan/OneDrive/Documents/DSP_Project/docs/FPGA_FFT_Accelerator_SAS_Report_Updated.docx)
+1. **Word Submission Document:** [`docs/DSP_Report.docx`](file:///c:/Users/jagan/OneDrive/Documents/DSP_Project/docs/DSP_Report.docx)
 2. **Main Technical Report:** [`docs/final_report.md`](file:///c:/Users/jagan/OneDrive/Documents/DSP_Project/docs/final_report.md)
 3. **Course Project Report:** [`docs/SAS_Project_Report.md`](file:///c:/Users/jagan/OneDrive/Documents/DSP_Project/docs/SAS_Project_Report.md)
 4. **Visual Figures Folder:** [`docs/figures/`](file:///c:/Users/jagan/OneDrive/Documents/DSP_Project/docs/figures/)

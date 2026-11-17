@@ -68,7 +68,7 @@ def add_image_with_caption(cell, img_path, caption_text, width_inches=5.2):
 
 def build_sas_report():
     template_path = "docs/SAS_Submission_Format.docx"
-    output_path = "docs/FPGA_FFT_Accelerator_SAS_Report.docx"
+    output_path = "docs/DSP_Report.docx"
     
     doc = docx.Document(template_path)
     
@@ -76,14 +76,14 @@ def build_sas_report():
     # Table 0: Student & Course Details
     # -------------------------------------------------------------------------
     t0 = doc.tables[0]
-    t0.rows[0].cells[1].text = "[Student Name]"
-    t0.rows[0].cells[3].text = "[Roll No.]"
-    t0.rows[1].cells[1].text = "ECE / [Section]"
-    t0.rows[1].cells[3].text = "4th Semester / 2nd Year"
-    t0.rows[2].cells[1].text = "Signals and Systems"
-    t0.rows[2].cells[3].text = "ECE-202"
-    t0.rows[3].cells[1].text = "[Faculty Name]"
-    t0.rows[3].cells[3].text = "November 16, 2026"
+    t0.rows[0].cells[1].text = "Jagan Kumar Swain\nSnehal Panda\nSree Om Naik"
+    t0.rows[0].cells[3].text = "202456652\n202456544\n202412696"
+    t0.rows[1].cells[1].text = "ECE / ECE-B"
+    t0.rows[1].cells[3].text = "5th Semester / 3nd Year"
+    t0.rows[2].cells[1].text = "Digital Signal Processing"
+    t0.rows[2].cells[3].text = "ECE-300"
+    t0.rows[3].cells[1].text = "Prof. Bibhuti Bhusan Mishra"
+    t0.rows[3].cells[3].text = "November 17, 2026"
     
     for row in t0.rows:
         for cell in row.cells:
@@ -96,7 +96,7 @@ def build_sas_report():
     # Table 1: Project Details
     # -------------------------------------------------------------------------
     t1 = doc.tables[1]
-    t1.rows[0].cells[1].text = "DSP-ECE202-01"
+    t1.rows[0].cells[1].text = "9"
     t1.rows[1].cells[1].text = "FPGA-Based FFT Accelerator for Single Radix-2 Butterfly"
     t1.rows[2].cells[1].text = "Module 4: Discrete Fourier Transform (DFT) & FFT Algorithms"
     t1.rows[3].cells[1].text = "CO-4: Analyze and compute Discrete Fourier Transforms using efficient Fast Fourier Transform algorithms, and synthesize fixed-point hardware architectures for real-time DSP applications."
@@ -304,9 +304,9 @@ def build_sas_report():
                     
     try:
         doc.save(output_path)
-        print(f"Generated official SAS Project Report with embedded figures at {output_path} successfully.")
+        print(f"Generated official DSP Project Report with embedded figures at {output_path} successfully.")
     except PermissionError:
-        fallback_path = "docs/FPGA_FFT_Accelerator_SAS_Report_Updated.docx"
+        fallback_path = "docs/DSP_Report_Temp.docx"
         doc.save(fallback_path)
         print(f"Original file was open in Word; saved report with embedded figures to {fallback_path} successfully.")
 

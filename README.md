@@ -172,7 +172,7 @@ fpga_fft_accelerator/
     ├── final_report.md                 # Comprehensive project report & viva voce Q&A
     ├── comparison_tables.md            # Comparative study across N in {16, 32, 64}
     ├── SAS_Project_Report.md           # Formal academic submission report (Sections A-I)
-    ├── FPGA_FFT_Accelerator_SAS_Report.docx # Formatted Word report matching SAS template
+    ├── DSP_Report.docx                  # Official course submission Word report with figures
     └── phase_reports/                  # Individual reports for Phases 0 through 6
 ```
 
